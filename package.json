@@ -1,0 +1,14 @@
+{
+  "name": "gttd-midigen",
+  "version": "0.0.1",
+  "description": "Game Theory Training Dance - MIDI generator",
+  "main": "gttd-midigen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tom Wadley",
+  "license": "MIT",
+  "dependencies": {
+    "jsmidgen": "^0.1.3"
+  }
+}
