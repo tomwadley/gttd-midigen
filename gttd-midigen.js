@@ -114,16 +114,16 @@ var rockPaperScissors = {
   options: ['paper', 'scissors', 'rock'],
   callbacks: {
     'paper': [
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_SUBDOMINANT, NOTE_C, first, last, wins); },
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_SUBDOMINANT, NOTE_A, first, last, wins); }
+      function(track, nash, wins) { rpsProgression(track, ROOT_SUBDOMINANT, NOTE_C, wins); },
+      function(track, nash, wins) { rpsProgression(track, ROOT_SUBDOMINANT, NOTE_A, wins); }
     ],
     'scissors': [
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_DOMINANT, NOTE_C, first, last, wins); },
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_DOMINANT, NOTE_A, first, last, wins); }
+      function(track, nash, wins) { rpsProgression(track, ROOT_DOMINANT, NOTE_C, wins); },
+      function(track, nash, wins) { rpsProgression(track, ROOT_DOMINANT, NOTE_A, wins); }
     ],
     'rock': [
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_TONIC, NOTE_C, first, last, wins); },
-      function(track, nash, first, last, wins) { rpsProgression(track, ROOT_TONIC, NOTE_A, first, last, wins); }
+      function(track, nash, wins) { rpsProgression(track, ROOT_TONIC, NOTE_C, wins); },
+      function(track, nash, wins) { rpsProgression(track, ROOT_TONIC, NOTE_A, wins); }
     ]
   },
   payoffMatrix: {
@@ -170,12 +170,10 @@ function playGame(track, game) {
       if (game.hasOwnProperty('callbacks')) {
         var player1Callback = game.callbacks[player1][0];
         var player2Callback = game.callbacks[player2][1];
-        var first = i == 0 && j == 0;
-        var last = i == game.options.length - 1 && j == game.options.length - 1;
         var player1Wins = payoff[0] >= payoff[1];
         var player2Wins = payoff[1] >= payoff[0];
-        player1Callback(track, false, first, false, player1Wins);
-        player2Callback(track, false, false, last, player2Wins);
+        player1Callback(track, false, player1Wins);
+        player2Callback(track, false, player2Wins);
       }
 
       var possibleNash = false;
@@ -214,8 +212,8 @@ function playGame(track, game) {
     if (game.hasOwnProperty('callbacks')) {
       player1Callback = game.callbacks[ne[0]][0];
       player2Callback = game.callbacks[ne[1]][1];
-      player1Callback(track, true, false, false, false);
-      player2Callback(track, true, false, false, false);
+      player1Callback(track, true, false);
+      player2Callback(track, true, false);
     }
   }
 }
@@ -235,21 +233,11 @@ function prisonersDilemaProgression(track, scale, nash) {
   }
 }
 
-function rpsProgression(track, root, scale_note, first, last, wins) {
+function rpsProgression(track, root, scale_note, wins) {
   var scale = wins ? majorScale(scale_note) : minorScale(scale_note);
 
-  if (last) {
-    track.note(0, scale(root - 1), 64, 48);
-    chord(track, chordNotes(root, scale), 192);
-  } else if (first) {
-    track.note(0, scale(root - 1), 64);
-    chord(track, chordNotes(root, scale), 96);
-    chordWithVolume(track, chordNotes(root, scale), 48, 30);
-  } else {
-    track.note(0, scale(root - 1), 64, 48);
-    chord(track, chordNotes(root, scale), 96);
-    chordWithVolume(track, chordNotes(root, scale), 48, 30);
-  }
+  track.note(0, scale(root - 1), 64);
+  chord(track, chordNotes(root, scale), 192);
 }
 
 function fightFlightProgression(track, nash, first_root, second_root, split) {
